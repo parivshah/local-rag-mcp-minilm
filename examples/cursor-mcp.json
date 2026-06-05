@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "local-rag-mcp-minilm": {
+      "command": "C:\\KF\\repos\\projects\\local-rag-mcp-minilm\\.venv\\Scripts\\python.exe",
+      "args": ["C:\\KF\\repos\\projects\\local-rag-mcp-minilm\\mcp_server.py"]
+    }
+  }
+}

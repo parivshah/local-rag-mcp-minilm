@@ -1,0 +1,82 @@
+Local RAG with MiniLM and MCP
+
+This sample document describes a local Retrieval-Augmented Generation (RAG) setup
+that combines three ideas from earlier learning projects:
+
+  Recursive chunking for better retrieval units
+  all-MiniLM-L6-v2 for local embeddings (no Ollama needed for search vectors)
+  MCP tools so Cursor can query your private index
+
+What is all-MiniLM-L6-v2?
+
+all-MiniLM-L6-v2 is a compact sentence embedding model from Hugging Face. It maps
+text into 384-dimensional vectors that capture semantic similarity. It runs locally
+through the sentence-transformers library and is a common default for RAG prototypes.
+
+Why use MiniLM instead of Ollama embeddings?
+
+Both approaches keep data on your machine. MiniLM is bundled with Python libraries,
+downloads once (~80 MB), and embeds quickly on a CPU. Ollama embedding models like
+nomic-embed-text are also strong; this project shows an alternative embedding path
+while still using Ollama for the final chat answer.
+
+Recursive chunking
+
+Documents are split with RecursiveCharacterTextSplitter before embedding. The splitter
+tries paragraph breaks, line breaks, sentences, and words before falling back to
+characters. Typical settings:
+
+  chunk_size: 500 characters
+  chunk_overlap: 50 characters
+
+Overlap preserves context when an answer sits near a chunk boundary.
+
+Pipeline overview
+
+1. Load document (text or PDF)
+2. Split with recursive chunking
+3. Embed each chunk with all-MiniLM-L6-v2
+4. Store vectors in ChromaDB
+5. At query time: embed the question, find top-k similar chunks
+6. Optional: send chunks to Ollama tinyllama for a grounded answer
+
+MCP tools
+
+When the MCP server is connected to Cursor, three tools are available:
+
+  rag_status — chunk count and indexed source files
+  search_documents — retrieval only (fast, no LLM)
+  ask_documents — full RAG answer with source excerpts
+
+Index documents with the CLI first:
+
+  python main.py ingest data/sample.txt
+
+Then ask from Cursor using the MCP tools.
+
+Compare embedding backends
+
+Fixed-size chunking with Ollama embeddings works, but switching the embedding model
+requires a fresh vector index. MiniLM produces 384-dimensional vectors; other models
+use different sizes. Never mix embeddings from different models in the same ChromaDB
+collection.
+
+Example question
+
+"What embedding model does this project use?"
+
+Retrieval should return this section because it mentions all-MiniLM-L6-v2 and
+sentence-transformers directly.
+
+Getting started
+
+  python main.py preview data/sample.txt
+  python main.py ingest data/sample.txt
+  python main.py search "What is MiniLM?"
+  python main.py ask "What MCP tools are available?" --show-sources
+
+Further reading
+
+  sentence-transformers: https://www.sbert.net/
+  Model card: all-MiniLM-L6-v2 on Hugging Face
+  MCP: https://modelcontextprotocol.io/

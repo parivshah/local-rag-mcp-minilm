@@ -1,5 +1,7 @@
 # I Turned My Local RAG Into an MCP Server — and Swapped in MiniLM Embeddings on My Laptop
 
+![Article cover](./local-rag-mcp-minilm-article-cover.png)
+
 In my [first article](https://medium.com/towards-artificial-intelligence/i-built-a-private-ai-that-answers-questions-from-my-own-pdfs-entirely-on-my-laptop-3b4122daa946), I built a local RAG system that answers questions from my own PDFs using Ollama, ChromaDB, and TinyLlama.
 
 In my [second article](https://medium.com/p/7c0138877913), I improved retrieval by switching from fixed-size chunking to recursive chunking with overlap.

@@ -109,6 +109,7 @@ local-rag-mcp-minilm/
 ├── docs/
 │   ├── architecture.md                      # Diagrams, pipelines, component map
 │   ├── local-rag-mcp-minilm-article.md      # Medium / LinkedIn article draft
+│   ├── local-rag-mcp-minilm-article-cover.png
 │   ├── local-rag-mcp-architecture-diagram.png
 │   └── local-rag-mcp-tools-table.png
 ├── rag/

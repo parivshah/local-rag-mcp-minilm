@@ -3,5 +3,4 @@ venv/
 __pycache__/
 *.py[cod]
 .chroma/
-*.pdf
 .env

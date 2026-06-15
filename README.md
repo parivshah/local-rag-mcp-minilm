@@ -75,22 +75,30 @@ Example Cursor prompts:
 
 ## Architecture
 
-```
-Document (.txt / .pdf)
-  └─► recursive chunker
-        └─► all-MiniLM-L6-v2 (sentence-transformers)
-              └─► ChromaDB (.chroma/)
+Full diagram and component breakdown: [docs/architecture.md](docs/architecture.md) · [architecture diagram PNG](docs/local-rag-mcp-architecture-diagram.png)
 
-Question
-  └─► MiniLM embed query
-        └─► ChromaDB top-k search
-              └─► Ollama tinyllama (grounded answer)
-
-Cursor
-  └─► MCP stdio
-        └─► mcp_server.py
-              └─► rag/service.py
 ```
+                    ┌─────────────────────────────────────────┐
+                    │           rag/service.py                │
+                    │     (shared by CLI and MCP tools)       │
+                    └─────────────────────────────────────────┘
+                           ▲                    ▲
+              ┌────────────┘                    └────────────┐
+              │                                              │
+       main.py CLI                              mcp_server.py (stdio)
+   ingest · preview · search · ask          search_documents · ask_documents · rag_status
+              │                                              │
+              └──────────────────┬───────────────────────────┘
+                                 ▼
+Document → recursive chunker → MiniLM embed → ChromaDB (.chroma/)
+Question → MiniLM search → top-K chunks → [optional] Ollama tinyllama → answer
+```
+
+| Path | Embedding | LLM | Entry point |
+|------|-----------|-----|-------------|
+| Ingest | MiniLM | — | `python main.py ingest` |
+| Search | MiniLM | — | CLI `search` or MCP `search_documents` |
+| Ask | MiniLM | TinyLlama | CLI `ask` or MCP `ask_documents` |
 
 ## Project layout
 
@@ -98,6 +106,11 @@ Cursor
 local-rag-mcp-minilm/
 ├── main.py                 # CLI entry point
 ├── mcp_server.py           # FastMCP tools for Cursor
+├── docs/
+│   ├── architecture.md                      # Diagrams, pipelines, component map
+│   ├── local-rag-mcp-minilm-article.md      # Medium / LinkedIn article draft
+│   ├── local-rag-mcp-architecture-diagram.png
+│   └── local-rag-mcp-tools-table.png
 ├── rag/
 │   ├── config.py           # models, chunk size, paths
 │   ├── chunker.py          # RecursiveCharacterTextSplitter

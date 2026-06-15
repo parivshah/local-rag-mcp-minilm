@@ -2,7 +2,7 @@ from pathlib import Path
 
 EMBED_MODEL = "all-MiniLM-L6-v2"
 EMBED_DIM = 384
-LLM_MODEL = "tinyllama"
+LLM_MODEL = "llama3"
 
 CHUNK_SIZE = 500
 CHUNK_OVERLAP = 50
